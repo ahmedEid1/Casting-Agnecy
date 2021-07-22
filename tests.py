@@ -17,6 +17,7 @@ class AgencyTestCase(unittest.TestCase):
         self.client = self.app.test_client
         self.database_name = "agency"
         self.database_path = "postgresql://{}/{}".format('postgres:postgres@localhost:5432', self.database_name)
+
         setup_db(self.app, self.database_path)
 
         with self.app.app_context():
@@ -29,6 +30,13 @@ class AgencyTestCase(unittest.TestCase):
 
     # actors endpoints success
     def test_get_actors(self):
+        actor = {
+            'name': "test_user",
+            'age': 5,
+            'gender': 'male'
+        }
+        self.client().post('/actors/add', data=json.dumps(actor), headers={'Content-Type': 'application/json'})
+
         res = self.client().get('/actors')
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
@@ -37,10 +45,10 @@ class AgencyTestCase(unittest.TestCase):
     def test_get_actor(self):
         actors = Actor.query.all()
         actor_id = actors[0].id
-        res = self.client().get('/actors/' + actor_id)
+        res = self.client().get('/actors/' + str(actor_id))
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['actor'].id, actor_id)
+        self.assertEqual(data['actor']['id'], actor_id)
 
     def test_actor_create(self):
         actor = {
@@ -51,7 +59,8 @@ class AgencyTestCase(unittest.TestCase):
         res = self.client().post('/actors/add', data=json.dumps(actor), headers={'Content-Type': 'application/json'})
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['actor'].age, 5)
+        print(actor)
+        self.assertEqual(data['actor']["age"], 5)
 
     def test_actor_edit(self):
         edit_data = {
@@ -59,22 +68,29 @@ class AgencyTestCase(unittest.TestCase):
         }
         actors = Actor.query.all()
         actor_id = actors[-1].id
-        res = self.client.patch('actors/edit/' + actor_id, data=json.dumps(edit_data), headers={'Content-Type': 'application/json'})
+        res = self.client().patch('actors/edit/' + str(actor_id), data=json.dumps(edit_data),
+                                headers={'Content-Type': 'application/json'})
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['actor'].age, 4)
-        self.assertEqual(data['actor'].name, "test_user")
+        self.assertEqual(data['actor']['age'], 4)
+        self.assertEqual(data['actor']['name'], "test_user")
 
     def test_actor_delete(self):
         actors = Actor.query.all()
         actor_id = actors[-1].id
-        res = self.client().delete('/actors/' + actor_id)
+        res = self.client().delete('/actors/' + str(actor_id))
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['id'], actor_id)
 
-    # actors endpoints success
+    # movies endpoints success
     def test_get_movies(self):
+        movie = {
+            'title': "test_movie",
+            'release_date': str(datetime.now())
+        }
+        self.client().post('/movies/add', data=json.dumps(movie),
+                           headers={'Content-Type': 'application/json'})
         res = self.client().get('/movies')
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
@@ -83,21 +99,21 @@ class AgencyTestCase(unittest.TestCase):
     def test_get_movie(self):
         movies = Movie.query.all()
         movie_id = movies[0].id
-        res = self.client().get('/movies/' + movie_id)
+        res = self.client().get('/movies/' + str(movie_id))
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['movie'].id, movie_id)
+        self.assertEqual(data['movie']['id'], movie_id)
 
     def test_movie_create(self):
         movie = {
             'title': "test_movie",
-            'release_date': datetime.now()
+            'release_date': str(datetime.now())
         }
         res = self.client().post('/movies/add', data=json.dumps(movie),
                                  headers={'Content-Type': 'application/json'})
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['movie'].age, "test_movie")
+        self.assertEqual(data['movie']['title'], "test_movie")
 
     def test_movie_edit(self):
         edit_data = {
@@ -105,121 +121,103 @@ class AgencyTestCase(unittest.TestCase):
         }
         movies = Movie.query.all()
         movie_id = movies[-1].id
-        time = movies[-1].id.release_date
-        res = self.client.patch('actors/edit/' + movie_id, data=json.dumps(edit_data),
+        time = movies[-1].release_date
+        res = self.client().patch('movies/edit/' + str(movie_id), data=json.dumps(edit_data),
                                 headers={'Content-Type': 'application/json'})
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['movie'].title, "new_title")
-        self.assertEqual(data['movie'].release_date, time)
+        self.assertEqual(data['movie']['title'], "new_title")
+        self.assertEqual(data['movie']['release_date'], str(time))
 
     def test_movie_delete(self):
         movies = Movie.query.all()
         movie_id = movies[-1].id
-        res = self.client().delete('/movies/' + movie_id)
+        res = self.client().delete('/movies/' + str(movie_id))
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['id'], movie_id)
 
-    def test_wrong_method(self):
-        res = self.client().post('/categories')
+    # actors error behaviour
+    def test_wrong_get_actors(self):
+        res = self.client().post('/actors')
+        data = json.loads(res.data)
         self.assertEqual(res.status_code, 405)
 
-    def test_get_questions(self):
-        res = self.client().get('/questions')
+    def test_wrong_get_actor(self):
+        res = self.client().post('/actors/1000000000000')
         data = json.loads(res.data)
-        self.assertEqual(res.status_code, 200)
-        self.assertGreater(len(data['questions']), 0)
+        self.assertEqual(res.status_code, 405)
 
-    def test_zero_questions(self):
-        res = self.client().get('/questions?page=100')
-        data = json.loads(res.data)
-        self.assertEqual(res.status_code, 404)
-
-    def test_question_delete(self):
-        res = self.client().delete('/questions/5')
-        data = json.loads(res.data)
-        self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['id'], 5)
-
-    def test_400_bad_delete(self):
-        res = self.client().delete('/questions/1000')
-        self.assertEqual(res.status_code, 400)
-
-    def test_question_insert(self):
-        info = {
-            'question': "how are you",
-            'answer': "fine",
-            'category': 4,
-            'difficulty': 1
-        }
-        res = self.client().post('/questions/add', data=json.dumps(info), headers={'Content-Type': 'application/json'})
-        data = json.loads(res.data)
-        self.assertEqual(res.status_code, 200)
-        self.assertEqual(len(data['question']), 5)
-
-    def test_not_complete_question_insert(self):
-        info = {
-            'answer': "fine",
-            'category': 4,
-            'difficulty': 1
-        }
-        res = self.client().post('/questions/add', data=json.dumps(info), headers={'Content-Type': 'application/json'})
+    def test_wrong_delete_actor(self):
+        res = self.client().delete('/actors/10000000000000')
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 400)
-        self.assertEqual(data['message'], "Bad Request")
 
-    def test_search_word(self):
-        info = {
-            'searchTerm': "1"
+    def test_wrong_create_actor(self):
+        actor = {
+            'name': "test_user",
+            'age': "not a number",
+            'gender': 'male'
         }
-        res = self.client().post('/questions', data=json.dumps(info), headers={'Content-Type': 'application/json'})
-        data = json.loads(res.data)
-        self.assertEqual(res.status_code, 200)
-        self.assertGreater(len(data['questions']), 0)
-
-    def test_searchTerm_not_str(self):
-        info = {
-            'searchTerm': 1
-        }
-        res = self.client().post('/questions', data=json.dumps(info), headers={'Content-Type': 'application/json'})
-        data = json.loads(res.data)
-        self.assertEqual(res.status_code, 500)
-
-    def test_get_questions_by_category(self):
-        res = self.client().get("categories/5/questions")
-        data = json.loads(res.data)
-        self.assertEqual(res.status_code, 200)
-        self.assertGreater(len(data['questions']), 0)
-
-    def test_404_category_not_found(self):
-        res = self.client().get("categories/100/questions")
-        data = json.loads(res.data)
-        self.assertEqual(res.status_code, 404)
-        self.assertEqual(data['message'], "Not Found")
-
-    def test_get_quiz_question(self):
-        info = {
-            "quiz_category": {
-                "id": 2,
-            },
-            "previous_questions": [1, 2, 3]
-        }
-        res = self.client().post("/quizzes", data=json.dumps(info), headers={'Content-Type': 'application/json'})
-        data = json.loads(res.data)
-        self.assertEqual(res.status_code, 200)
-        self.assertEqual(len(data['question']), 5)
-
-    def test_wrong_category_id(self):
-        info = {
-            "quiz_category": {
-            },
-            "previous_questions": [1, 2, 3]
-        }
-        res = self.client().post("/quizzes", data=json.dumps(info), headers={'Content-Type': 'application/json'})
+        res = self.client().post('/actors/add', data=json.dumps(actor), headers={'Content-Type': 'application/json'})
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 400)
-        self.assertEqual(data['message'], "Bad Request")
+
+    def test_wrong_edit_actor(self):
+        edit_data = {
+            "age": "not a number"
+        }
+        actors = Actor.query.all()
+        actor_id = actors[-1].id
+        res = self.client().patch('actors/edit/' + str(actor_id), data=json.dumps(edit_data),
+                                headers={'Content-Type': 'application/json'})
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 400)
+
+    # movies error behaviour
+    def test_wrong_get_movies(self):
+        res = self.client().post('/movies')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 405)
+
+    def test_wrong_get_movie(self):
+        res = self.client().post('/movies/100000000000000')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 405)
+
+    def test_wrong_delete_movie(self):
+        res = self.client().delete('/movies/100000000')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 400)
+
+    def test_wrong_create_movie(self):
+        movie = {
+            'title': "test_movie",
+            'release_date': "not a date"
+        }
+        res = self.client().post('/movies/add', data=json.dumps(movie),
+                                 headers={'Content-Type': 'application/json'})
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 400)
+
+    def test_wrong_edit_movie(self):
+        movie = {
+            'title': "test_movie",
+            'release_date': str(datetime.now())
+        }
+        self.client().post('/movies/add', data=json.dumps(movie),
+                           headers={'Content-Type': 'application/json'})
+
+        edit_data = {
+            "release_date": "not a date"
+        }
+        movies = Movie.query.all()
+        movie_id = movies[-1].id
+        time = movies[-1].release_date
+        res = self.client().patch('movies/edit/' + str(movie_id), data=json.dumps(edit_data),
+                                headers={'Content-Type': 'application/json'})
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 400)
 
 
 if __name__ == "__main__":

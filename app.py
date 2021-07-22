@@ -60,7 +60,7 @@ def create_app(test_config=None):
 
             actor.insert()
 
-            actors = Actor.query.order_by(Actor.id).all()
+            actors = Actor.query.all()
             return jsonify(
                 {
                     "actor": actors[-1].format(),
@@ -74,9 +74,9 @@ def create_app(test_config=None):
     def edit_actor(actor_id):
         try:
             actor = Actor.query.get(actor_id)
-            actor.name = request.json['name'] if request.json['name'] is None else actor.name
-            actor.age = request.json['age'] if request.json['age'] is None else actor.age
-            actor.gender = request.json['gender'] if request.json['gender'] is None else actor.gender
+            actor.name = request.json.get("name", actor.name)
+            actor.age = int(request.json.get("age", actor.age))
+            actor.gender = request.json.get("gender", actor.gender)
             actor.update()
 
             return jsonify({"actor": actor.format()})
@@ -97,7 +97,7 @@ def create_app(test_config=None):
     @app.route('/movies/<int:movie_id>', methods=["GET"])
     def get_movie(movie_id):
         try:
-            movie = Actor.query.get(movie_id)
+            movie = Movie.query.get(movie_id)
             return jsonify({"movie": movie.format()})
         except:
             abort(400)
@@ -106,7 +106,7 @@ def create_app(test_config=None):
     @app.route('/movies/<int:movie_id>', methods=["DELETE"])
     def delete_movie(movie_id):
         try:
-            movie = Actor.query.get(movie_id)
+            movie = Movie.query.get(movie_id)
             movie.delete()
             return jsonify({"id": movie_id})
         except:
@@ -126,7 +126,7 @@ def create_app(test_config=None):
             movies = Movie.query.order_by(Movie.id).all()
             return jsonify(
                 {
-                    "question": movies[-1].format(),
+                    "movie": movies[-1].format(),
                 }
             )
         except:
@@ -137,8 +137,8 @@ def create_app(test_config=None):
     def edit_movie(movie_id):
         try:
             movie = Movie.query.get(movie_id)
-            movie.title = request.json['title'] if request.json['title'] is None else movie.title
-            movie.release_date = request.json['release_date'] if request.json['release_date'] is None else movie.release_date
+            movie.title = request.json.get("title", movie.title)
+            movie.release_date = request.json.get("release_date", movie.release_date)
             movie.update()
 
             return jsonify({"movie": movie.format()})
@@ -155,6 +155,17 @@ def create_app(test_config=None):
                 "message": "Not Found"
             }
         ), 404
+
+    # error handling
+    @app.errorhandler(405)
+    def method_not_allowed(error):
+        return jsonify(
+            {
+                "success": False,
+                "error": 405,
+                "message": "method_not_allowed"
+            }
+        ), 405
 
     @app.errorhandler(422)
     def not_found(error):
