@@ -1,15 +1,15 @@
+import os
+
 from sqlalchemy import Column, String, Integer, DateTime, CheckConstraint, Enum
 from flask_sqlalchemy import SQLAlchemy
 
-database_name = "agency"
-database_path = "postgresql://{}/{}".format('postgres:postgres@localhost:5432', database_name)
+
+database_path = "postgresql://{}:{}@{}/{}".format(os.environ.get("db_user"),
+                                                  os.environ.get("db_password"),
+                                                  os.environ.get('db_url'),
+                                                  os.environ.get('db_name'))
 
 db = SQLAlchemy()
-
-'''
-setup_db(app)
-    binds a flask application and a SQLAlchemy service
-'''
 
 
 def setup_db(app, db_path=database_path):
@@ -18,11 +18,6 @@ def setup_db(app, db_path=database_path):
     db.app = app
     db.init_app(app)
     db.create_all()
-
-
-'''
-Movie
-'''
 
 
 class Movie(db.Model):
@@ -53,11 +48,6 @@ class Movie(db.Model):
             'title': self.title,
             'release_date': str(self.release_date)
         }
-
-
-'''
-Actor
-'''
 
 
 class Actor(db.Model):

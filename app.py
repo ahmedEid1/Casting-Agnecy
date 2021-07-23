@@ -1,6 +1,8 @@
+import os
+
 from flask import Flask, request, abort, jsonify
 from flask_cors import CORS
-import random
+from auth.auth import AuthError, requires_auth
 
 from models import setup_db, Actor, Movie
 
@@ -8,6 +10,7 @@ from models import setup_db, Actor, Movie
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
+    app.config['SECRET_KEY'] = "dskdm"
     setup_db(app)
 
     cors = CORS(app, resources={r"/*": {"origins": "*"}})
@@ -18,9 +21,18 @@ def create_app(test_config=None):
         response.headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE")
         return response
 
+    @app.route('/login-url')
+    def login():
+        return jsonify(
+            {
+                "login-url": os.environ.get('login_url')
+            }
+        )
+
     # get all the actors
     @app.route('/actors', methods=['GET'])
-    def get_actors():
+    @requires_auth("get:actors")
+    def get_actors(payload):
         try:
             response = {
                 "actors": [actor.format() for actor in Actor.query.all()]
@@ -31,7 +43,8 @@ def create_app(test_config=None):
 
     # get actors by id
     @app.route('/actors/<int:actor_id>', methods=["GET"])
-    def get_actor(actor_id):
+    @requires_auth("get:actors")
+    def get_actor(payload, actor_id):
         try:
             actor = Actor.query.get(actor_id)
             return jsonify({"actor": actor.format()})
@@ -40,7 +53,8 @@ def create_app(test_config=None):
 
     # delete an actor
     @app.route('/actors/<int:actor_id>', methods=["DELETE"])
-    def delete_actor(actor_id):
+    @requires_auth("delete:actors")
+    def delete_actor(payload, actor_id):
         try:
             actor = Actor.query.get(actor_id)
             actor.delete()
@@ -49,8 +63,9 @@ def create_app(test_config=None):
             abort(400)
 
     # add a new actor
+    @requires_auth("add:actors")
     @app.route("/actors/add", methods=['POST'])
-    def create_actor():
+    def create_actor(payload, ):
         try:
             actor = Actor(
                 name=request.json['name'],
@@ -71,7 +86,8 @@ def create_app(test_config=None):
 
     # edit an actor
     @app.route("/actors/edit/<int:actor_id>", methods=['PATCH'])
-    def edit_actor(actor_id):
+    @requires_auth("edit:actors")
+    def edit_actor(payload, actor_id):
         try:
             actor = Actor.query.get(actor_id)
             actor.name = request.json.get("name", actor.name)
@@ -85,7 +101,8 @@ def create_app(test_config=None):
 
     # get all movies
     @app.route('/movies', methods=['GET'])
-    def get_movies():
+    @requires_auth("get:movies")
+    def get_movies(payload):
         movies = [movie.format() for movie in Movie.query.order_by().all()]
 
         response = {
@@ -95,7 +112,8 @@ def create_app(test_config=None):
 
     # get movies by id
     @app.route('/movies/<int:movie_id>', methods=["GET"])
-    def get_movie(movie_id):
+    @requires_auth("get:movies")
+    def get_movie(payload, movie_id):
         try:
             movie = Movie.query.get(movie_id)
             return jsonify({"movie": movie.format()})
@@ -104,7 +122,8 @@ def create_app(test_config=None):
 
     # delete an actor
     @app.route('/movies/<int:movie_id>', methods=["DELETE"])
-    def delete_movie(movie_id):
+    @requires_auth("delete:movies")
+    def delete_movie(payload, movie_id):
         try:
             movie = Movie.query.get(movie_id)
             movie.delete()
@@ -114,7 +133,8 @@ def create_app(test_config=None):
 
     # add a movie
     @app.route("/movies/add", methods=['POST'])
-    def create_movie():
+    @requires_auth("add:movies")
+    def create_movie(payload):
         try:
             movie = Movie(
                 title=request.json['title'],
@@ -134,7 +154,8 @@ def create_app(test_config=None):
 
     # add a movie
     @app.route("/movies/edit/<int:movie_id>", methods=['PATCH'])
-    def edit_movie(movie_id):
+    @requires_auth("edit:movies")
+    def edit_movie(payload, movie_id):
         try:
             movie = Movie.query.get(movie_id)
             movie.title = request.json.get("title", movie.title)
@@ -156,7 +177,6 @@ def create_app(test_config=None):
             }
         ), 404
 
-    # error handling
     @app.errorhandler(405)
     def method_not_allowed(error):
         return jsonify(
@@ -196,5 +216,13 @@ def create_app(test_config=None):
                 "message": "server error"
             }
         ), 500
+
+    @app.errorhandler(AuthError)
+    def auth_error(error):
+        return jsonify({
+            "success": False,
+            "error": error.error['code'],
+            "message": error.error['description']
+        }), error.status_code
 
     return app

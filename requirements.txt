@@ -16,3 +16,9 @@ python-editor==1.0.4
 six==1.16.0
 SQLAlchemy==1.4.20
 Werkzeug==2.0.1
+python-dotenv
+requests
+authlib
+
+
+jose~=1.0.0
