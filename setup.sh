@@ -1,3 +1,4 @@
+DATABASE_URL=postgresql://dvvymsabyzozsw:fe0fbbf5b6b6a89d4105d62f2d4643b21b62cf2451f194bef01f0405d002814e@@ec2-34-202-54-225.compute-1.amazonaws.com:5432/d8ccb3lpbuk0pm
 client_id=M0zNYFrX9YaKyt74TRL5F2oUjqRfL4Zz
 client_secret=25ddvCmUStOumA1iyG0HqkmLfZnEYOiQgDQEpdxhFPETk_vHpecyo2LMp1Q-wxQ5
 api_base_url=ahm.au.auth0.com

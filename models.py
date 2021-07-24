@@ -4,10 +4,11 @@ from sqlalchemy import Column, String, Integer, DateTime, CheckConstraint, Enum
 from flask_sqlalchemy import SQLAlchemy
 
 
-database_path = "postgresql://{}:{}@{}/{}".format(os.environ.get("db_user"),
-                                                  os.environ.get("db_password"),
-                                                  os.environ.get('db_url'),
-                                                  os.environ.get('db_name'))
+database_path = os.environ['DATABASE_URL']
+    # "postgresql://{}:{}@{}/{}".format(os.environ.get("db_user"),
+    #                                               os.environ.get("db_password"),
+    #                                               os.environ.get('db_url'),
+    #                                               os.environ.get('db_name'))
 
 db = SQLAlchemy()
 
@@ -17,7 +18,7 @@ def setup_db(app, db_path=database_path):
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
-    db.create_all()
+    # db.create_all()
 
 
 class Movie(db.Model):
