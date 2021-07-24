@@ -1,9 +1,21 @@
 # Casting-Agnecy
 
+## Motivation for project
+TODO......
+
+## Project dependencies, local development and hosting instructions,
+TODO.......
+
+## Detailed instructions for scripts to install any project dependencies, and to run the development server.
+TODO.......
+
+## Documentation of RBAC controls
+TODO.......
+
+
 ## API Endpoints
 
-
-## `/movies`
+### `/movies`
 <hr />
 <details>
 <summary><code>/movies</code></summary>
@@ -146,7 +158,7 @@
 </details>
 <hr/>
 
-## `/actors`
+### `/actors`
 <hr />
 <details>
 <summary><code>/actors</code></summary>
