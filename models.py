@@ -3,12 +3,10 @@ import os
 from sqlalchemy import Column, String, Integer, DateTime, CheckConstraint, Enum
 from flask_sqlalchemy import SQLAlchemy
 
-
+uri = os.getenv("DATABASE_URL")
+if uri.startswith("postgres://"):
+    uri = uri.replace("postgres://", "postgresql://", 1)
 database_path = os.environ['DATABASE_URL']
-    # "postgresql://{}:{}@{}/{}".format(os.environ.get("db_user"),
-    #                                               os.environ.get("db_password"),
-    #                                               os.environ.get('db_url'),
-    #                                               os.environ.get('db_name'))
 
 db = SQLAlchemy()
 
