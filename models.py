@@ -3,9 +3,7 @@ import os
 from sqlalchemy import Column, String, Integer, DateTime, CheckConstraint, Enum
 from flask_sqlalchemy import SQLAlchemy
 
-uri = os.getenv("DATABASE_URL")
-if uri.startswith("postgres://"):
-    uri = uri.replace("postgres://", "postgresql://", 1)
+
 database_path = os.environ['DATABASE_URL']
 
 db = SQLAlchemy()
