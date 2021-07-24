@@ -63,9 +63,9 @@ def create_app(test_config=None):
             abort(400)
 
     # add a new actor
-    @requires_auth("add:actors")
     @app.route("/actors/add", methods=['POST'])
-    def create_actor(payload, ):
+    @requires_auth("add:actors")
+    def create_actor(payload):
         try:
             actor = Actor(
                 name=request.json['name'],

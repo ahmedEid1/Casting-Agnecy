@@ -72,8 +72,8 @@
     
         ```
             {
-    "id": 1
-}
+                "id": 1
+            }
         ```
   
     </details>
@@ -147,3 +147,161 @@
 <hr/>
 
 ## `/actors`
+<hr />
+<details>
+<summary><code>/actors</code></summary>
+
+- Allowed methods:
+  - `GET` :
+    - Permission: `get:actors` 
+    - Return an object with one key `actors` which is a list of all actors
+    <details>
+      <summary>Example:</summary>
+    
+      ```
+          {
+            "actors": [
+                {
+                      "age": 5,
+                      "gender": "male",
+                      "id": 2,
+                      "name": "test_user"
+                  },
+                  {
+                      "age": 5,
+                      "gender": "male",
+                      "id": 3,
+                      "name": "test_user"
+                  },
+                  {
+                      "age": 5,
+                      "gender": "male",
+                      "id": 4,
+                      "name": "test_user"
+                  },
+                  {
+                      "age": 5,
+                      "gender": "male",
+                      "id": 5,
+                      "name": "test_user"
+                  }
+              ]
+          }
+      ```
+  
+    </details> 
+</details>
+<hr/>
+
+<details>
+<summary><code>/actors/[int:actor_id]</code></summary>
+
+- Allowed methods:
+  - `GET` :
+    - Permission: `get:actors` 
+    - Return an object with one key `actor` which is the actor with the same id as in the URL
+    <details>
+      <summary>Example:</summary>
+  
+      ```
+      Request: /actors/23
+      ---------------------------------------
+      Return:
+          {
+              "actor": {
+                  "age": 5,
+                  "gender": "male",
+                  "id": 23,
+                  "name": "test_user"
+              }
+          }
+      ```
+  
+    </details> 
+  <hr />
+  
+  - `DELETE` :
+    - Permission: `delete:actors` 
+    - Return an object with one key `id` after removing the actor with this is ID
+    <details>
+      <summary>Example:</summary>
+    
+      ```
+      {
+          "id": 23
+      }
+      ```
+  
+    </details>
+  <hr />
+
+</details>
+<hr />
+
+<details>
+<summary><code>/actors/add</code></summary>
+
+- Allowed methods:
+  - `POST` :
+    - Permission: `add:actors` 
+    - Parameters: takes a json object with `name`, `age`, and `gender`
+        - gender is male or female, and age must be greater than 0
+    - Return an object with one key `actor` which is the new actor created
+    <details>
+      <summary>Example:</summary>
+      
+      ```
+      Parameters:
+          {
+              "name": "new user",
+              "age": "5",
+              "gender": "male"
+          }
+      -------------------------------------------------------
+      Return: 
+          {
+              "actor": {
+                  "age": 5,
+                  "gender": "male",
+                  "id": 25,
+                  "name": "new user"
+              }
+          }
+      ```
+  
+    </details> 
+</details>
+<hr/>
+
+<details>
+<summary><code>/actors/edit/[int:actor_id]</code></summary>
+
+- Allowed methods:
+  - `PATCH` :
+    - Permission: `edit:actors` 
+    - Parameters: takes a json object with optional keys `name`, `age`, and `gender`
+        - the key given get updated, and the others stay the same
+    - Return an object with one key `actor` which is the actor with the given ID after updating it with the data in the request
+    <details>
+      <summary>Example:</summary>
+      
+      ```
+      Parameters:
+          {
+              "name": "edited user"
+          }
+      -------------------------------------------------------
+      Return: 
+          {
+              "actor": {
+                  "age": 5,
+                  "gender": "male",
+                  "id": 25,
+                  "name": "edited user"
+              }
+          }
+      ```
+  
+    </details> 
+</details>
+<hr/>
