@@ -1,17 +1,19 @@
 """empty message
 
-Revision ID: 2a128732ec21
-Revises: None
-Create Date: 2021-07-25 11:55:01.038732
+Revision ID: af0f6063d986
+Revises: 
+Create Date: 2021-07-25 14:09:21.645377
 
 """
-
-# revision identifiers, used by Alembic.
-revision = '2a128732ec21'
-down_revision = None
-
 from alembic import op
 import sqlalchemy as sa
+
+
+# revision identifiers, used by Alembic.
+revision = 'af0f6063d986'
+down_revision = None
+branch_labels = None
+depends_on = None
 
 
 def upgrade():

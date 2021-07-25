@@ -5,24 +5,26 @@ from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
 
-from app import create_app
-from models import setup_db, Actor, Movie
+from flaskr import create_app
+from models import Actor, Movie, setup_db
 
 
 class AgencyTestCase(unittest.TestCase):
     """This class represents the agency api test case"""
 
     def setUp(self):
+        """Define test variables and initialize app."""
         self.app = create_app()
         self.client = self.app.test_client
-        self.database_name = "agency"
-        self.database_path = "postgresql://{}/{}".format('postgres:postgres@localhost:5432', self.database_name)
+        self.database_path = os.getenv("TEST_DATABASE_URL")
 
         setup_db(self.app, self.database_path)
 
+        # binds the app to the current context
         with self.app.app_context():
             self.db = SQLAlchemy()
             self.db.init_app(self.app)
+            # create all tables
             self.db.create_all()
 
     def tearDown(self):
@@ -63,6 +65,13 @@ class AgencyTestCase(unittest.TestCase):
         self.assertEqual(data['actor']["age"], 5)
 
     def test_actor_edit(self):
+        actor = {
+            'name': "test_user",
+            'age': 5,
+            'gender': 'male'
+        }
+        res = self.client().post('/actors/add', data=json.dumps(actor), headers={'Content-Type': 'application/json'})
+        data = json.loads(res.data)
         edit_data = {
             "age": 4
         }
@@ -97,6 +106,12 @@ class AgencyTestCase(unittest.TestCase):
         self.assertGreater(len(data['movies']), 0)
 
     def test_get_movie(self):
+        movie = {
+            'title': "test_movie",
+            'release_date': str(datetime.now())
+        }
+        self.client().post('/movies/add', data=json.dumps(movie),
+                           headers={'Content-Type': 'application/json'})
         movies = Movie.query.all()
         movie_id = movies[0].id
         res = self.client().get('/movies/' + str(movie_id))

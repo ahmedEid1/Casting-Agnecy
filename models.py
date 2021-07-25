@@ -1,20 +1,30 @@
 import os
 
-from sqlalchemy import Column, String, Integer, DateTime, CheckConstraint, Enum
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Column, String, Integer, DateTime, CheckConstraint, Enum
 
+'''
+setup_db(app)
+    binds a flask application and a SQLAlchemy service
+'''
 
-database_path = os.environ['DATABASE_URL']
+database_path = os.getenv("DATABASE_URL")
 
 db = SQLAlchemy()
 
-
-def setup_db(app, db_path=database_path):
-    app.config["SQLALCHEMY_DATABASE_URI"] = db_path
+def setup_db(app, database_url=database_path):
+    app.config["SQLALCHEMY_DATABASE_URI"] = database_url
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
-    # db.create_all()
+    db.create_all()
+
+'''
+Movies:
+    - id: primary key
+    - title: string
+    - release_date: dateTime object
+'''
 
 
 class Movie(db.Model):
@@ -45,6 +55,15 @@ class Movie(db.Model):
             'title': self.title,
             'release_date': str(self.release_date)
         }
+
+
+'''
+actors
+    - id: primary key
+    - name: string
+    - gender: male or female
+    - age: integer > 0
+'''
 
 
 class Actor(db.Model):
