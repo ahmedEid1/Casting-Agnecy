@@ -5,7 +5,9 @@ from flask import jsonify, abort, request
 from auth.auth import requires_auth
 
 
+# add the actors endpoints to the flask app
 def setup_actors_endpoints(app, Actor):
+
     @app.route('/login-url')
     def login():
         return jsonify(

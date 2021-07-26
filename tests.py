@@ -3,6 +3,7 @@ import unittest
 import json
 from datetime import datetime
 
+from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 
 from flaskr import create_app
@@ -13,10 +14,12 @@ class AgencyTestCase(unittest.TestCase):
     """This class represents the agency api test case"""
 
     def setUp(self):
+        load_dotenv(dotenv_path="./.env")
+
         """Define test variables and initialize app."""
+        self.database_path = os.environ.get("TEST_DATABASE_URL")
         self.app = create_app()
         self.client = self.app.test_client
-        self.database_path = os.getenv("TEST_DATABASE_URL")
 
         setup_db(self.app, self.database_path)
 

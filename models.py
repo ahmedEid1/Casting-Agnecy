@@ -1,5 +1,6 @@
 import os
 
+from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, String, Integer, DateTime, CheckConstraint, Enum
 
@@ -8,16 +9,18 @@ setup_db(app)
     binds a flask application and a SQLAlchemy service
 '''
 
-database_path = os.getenv("DATABASE_URL")
+database_path = os.environ.get("DATABASE_URL")
 
 db = SQLAlchemy()
+
 
 def setup_db(app, database_url=database_path):
     app.config["SQLALCHEMY_DATABASE_URI"] = database_url
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
-    db.create_all()
+    # db.create_all()
+
 
 '''
 Movies:

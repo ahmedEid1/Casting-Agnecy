@@ -1,3 +1,6 @@
+import os
+
+from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
 from flask_migrate import Migrate
@@ -9,6 +12,8 @@ from api.movies_endpoints import setup_movies_endpoints
 
 
 def create_app():
+    load_dotenv(dotenv_path="./.env")
+
     # create and configure the app
     app = Flask(__name__)
     setup_db(app)
