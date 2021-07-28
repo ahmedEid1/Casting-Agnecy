@@ -25,8 +25,6 @@ def create_app():
     '''
     CORS(app, resources={r"/*": {"origins": "*"}})
 
-
-
     '''
     after_request decorator sets Access-Control-Allow
     '''
@@ -45,3 +43,6 @@ def create_app():
     setup_error_handling(app)
 
     return app
+
+
+create_app()
