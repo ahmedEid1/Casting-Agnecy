@@ -1,11 +1,10 @@
 import os
 
-from flask import request, jsonify
+from flask import jsonify
 from werkzeug.utils import redirect
 
 
 def setup_login(app):
-
     @app.route('/callback')
     def callback_handling():
         return jsonify(
@@ -17,5 +16,3 @@ def setup_login(app):
     @app.route('/login')
     def login():
         return redirect(os.environ.get("login_url"))
-
-

@@ -1,12 +1,15 @@
 # Casting-Agnecy
 
+## [live link](https://ae-casting-agency.herokuapp.com)
+
 ## Motivation for project
 This is an API for casting agency to allow  authenticated users to preform actions on the 
 Movies and Actors data based on their Role and given permissions.
 
 
 This project is the final project of Udacity full-stack nanodegree.
-it's a project to practice all the skills I learned 
+
+it's a project to practice all the skills which I learned: 
 - Data Modeling,
 - API development, documentation, and testing, 
 - authentication and authorization using third party integration (authO)
@@ -15,42 +18,39 @@ it's a project to practice all the skills I learned
 
 ## Project dependencies
 - Project dependencies are listed in the requirements.txt files 
-to run the project you need to have python & pip installed and run:
-- `pip install -r requirments.tx`
-- set the FlASK_APP env. var to flaksr
+  - to run the project you need to have python & pip installed and run:
+    - `pip install -r requirements.txt`
+  - set the FlASK_APP env. var to flaksr
   - windows: `set FLASK_APP=flaskr`
   - linux and mac: `export FLASK_APP=flaskr`
-- run the app:
-  - `flask run`
   
 
-### Database 
-- add the following env variables to .env file to run the app
-  - MY_DATABASE_URL="......"
-  - TEST_DATABASE_URL="......" (used for testing the app, you can the same DB for both)
-
-### Auth0
-for the auth0 to work add the following env. variables
-- client_id
-- client_secret
-- API_AUDIENCE
-- api_base_url (your auth0 domain)
-- ALGORITHMS
-
-### API
-- you need to set an env variable for `login_url` which is the url to sign-in to get the token
-  - if you didn't the app will work but `/login_url` will return null 
-
+- set the following environment variables in terminal or in `.env` file
+  - Database 
+    - add the following env variables to .env file to run the app
+    - MY_DATABASE_URL="......"
+    - TEST_DATABASE_URL="......" (used for testing the app, you can the same DB for both)
+  - Auth0: for the auth0 to work add the following env. variables
+    - client_id
+    - client_secret
+    - API_AUDIENCE
+    - api_base_url (your auth0 domain ex: "https://[......].auth0.com")
+    - ALGORITHMS
+  - API
+    - you need to set an env variable for `login_url` which is the url to redirect the user to sign-in and get the token
+  - Testing
+    - to run the tests you need a token for every role without the `Berear ` part:
+      - assistant_token
+      - director_token
+      - producer_token
+    - if you don't set them the app will run, but most tests will fail
+  
 _**you can all your env. variables to a `.env` file**_
 
----
-
-## Detailed instructions for scripts to install any project dependencies, and to run the development server.
-TODO.......
-
-## Documentation of RBAC controls
-TODO.......
-
+  
+- after setting everything you can run the app:
+  - `flask run`
+  
 ---
 ## RBAC controls
 unauthenticated users don't have access to any of the endpoints of the API
@@ -61,13 +61,13 @@ unauthenticated users don't have access to any of the endpoints of the API
   
 
 - Casting Director
-  - All permissions a Casting Assistant has and…
+  - All permissions of a Casting Assistant, and
   - Add or delete an actor from the database
   - Modify actors or movies
   
 
 - Executive Producer
-  - All permissions a Casting Director has and…
+  - All permissions of a Casting Director, and
   - Add or delete a movie from the database
 ---
 

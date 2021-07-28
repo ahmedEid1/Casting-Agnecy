@@ -38,6 +38,7 @@ def create_app():
     # the endpoints for the Actors and movies
     setup_actors_endpoints(app, Actor)
     setup_movies_endpoints(app, Movie)
+    # a simple login endpoint that redirect to the auth0
     setup_login(app)
     # custom error handling
     setup_error_handling(app)
@@ -45,4 +46,5 @@ def create_app():
     return app
 
 
+# initializing the app for gunicorn
 app = create_app()
