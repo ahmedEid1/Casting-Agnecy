@@ -9,7 +9,7 @@ setup_db(app)
     binds a flask application and a SQLAlchemy service
 '''
 
-database_path = os.environ.get("DATABASE_URL")
+database_path = os.environ.get("MY_DATABASE_URL")
 
 db = SQLAlchemy()
 

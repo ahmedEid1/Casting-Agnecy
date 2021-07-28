@@ -26,7 +26,7 @@ to run the project you need to have python & pip installed and run:
 
 ### Database 
 - add the following env variables to .env file to run the app
-  - DATABASE_URL="......"
+  - MY_DATABASE_URL="......"
   - TEST_DATABASE_URL="......" (used for testing the app, you can the same DB for both)
 
 ### Auth0
