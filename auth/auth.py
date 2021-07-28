@@ -6,7 +6,7 @@ from urllib.request import urlopen
 from flask import request
 from jose import jwt
 
-AUTH0_DOMAIN = os.environ.get("api_base_url")
+AUTH0_DOMAIN = str(os.environ.get("api_base_url"))
 ALGORITHMS = [os.environ.get('ALGORITHMS')]
 API_AUDIENCE = os.environ.get("API_AUDIENCE")
 
@@ -19,7 +19,6 @@ class AuthError(Exception):
 
 def get_token_auth_header():
     header = request.headers.get('Authorization', "")
-
     if not header:
         raise AuthError({
             'code': 'authorization_header_missing',

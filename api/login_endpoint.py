@@ -8,8 +8,6 @@ def setup_login(app):
 
     @app.route('/callback')
     def callback_handling():
-        access_token = request.url
-
         return jsonify(
             {
                 "access_token": "copy the access token from the url ^_^"

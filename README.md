@@ -83,10 +83,10 @@ so he still has no access to any of the endpoints.**_
 > redirect you to the Auth0 login page, after signing in you can copy the token 
 > from the url and added to your requests
 
-- you can use the following accounts to test the permissions
-  - [.....................]
-  - [.....................]
-  - [.....................]
+- you can use the following accounts to test the api with different permissions.
+  - Assistant: email:`assistant@test.com`, password: `Assistant#123`
+  - Director: email:`director@test.com`, password: `Director#123`
+  - Producer: email:`producer@test.com`, password: `Producer#123`
 
 
 ### `/movies`
