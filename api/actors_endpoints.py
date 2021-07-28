@@ -8,14 +8,6 @@ from auth.auth import requires_auth
 # add the actors endpoints to the flask app
 def setup_actors_endpoints(app, Actor):
 
-    @app.route('/login-url')
-    def login():
-        return jsonify(
-            {
-                "login-url": os.environ.get('login_url')
-            }
-        )
-
     # get all the actors
     @app.route('/actors', methods=['GET'])
     @requires_auth("get:actors")

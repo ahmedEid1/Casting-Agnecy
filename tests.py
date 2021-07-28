@@ -14,13 +14,13 @@ class AgencyTestCase(unittest.TestCase):
     """This class represents the agency api test case"""
 
     def setUp(self):
+        # load variables from .env file
         load_dotenv(dotenv_path="./.env")
 
         """Define test variables and initialize app."""
         self.database_path = os.environ.get("TEST_DATABASE_URL")
         self.app = create_app()
         self.client = self.app.test_client
-
         setup_db(self.app, self.database_path)
 
         # binds the app to the current context
@@ -74,14 +74,14 @@ class AgencyTestCase(unittest.TestCase):
             'gender': 'male'
         }
         res = self.client().post('/actors/add', data=json.dumps(actor), headers={'Content-Type': 'application/json'})
-        data = json.loads(res.data)
+        json.loads(res.data)
         edit_data = {
             "age": 4
         }
         actors = Actor.query.all()
         actor_id = actors[-1].id
         res = self.client().patch('actors/edit/' + str(actor_id), data=json.dumps(edit_data),
-                                headers={'Content-Type': 'application/json'})
+                                  headers={'Content-Type': 'application/json'})
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['actor']['age'], 4)
@@ -141,7 +141,7 @@ class AgencyTestCase(unittest.TestCase):
         movie_id = movies[-1].id
         time = movies[-1].release_date
         res = self.client().patch('movies/edit/' + str(movie_id), data=json.dumps(edit_data),
-                                headers={'Content-Type': 'application/json'})
+                                  headers={'Content-Type': 'application/json'})
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['movie']['title'], "new_title")
@@ -158,17 +158,17 @@ class AgencyTestCase(unittest.TestCase):
     # actors error behaviour
     def test_wrong_get_actors(self):
         res = self.client().post('/actors')
-        data = json.loads(res.data)
+        json.loads(res.data)
         self.assertEqual(res.status_code, 405)
 
     def test_wrong_get_actor(self):
         res = self.client().post('/actors/1000000000000')
-        data = json.loads(res.data)
+        json.loads(res.data)
         self.assertEqual(res.status_code, 405)
 
     def test_wrong_delete_actor(self):
         res = self.client().delete('/actors/10000000000000')
-        data = json.loads(res.data)
+        json.loads(res.data)
         self.assertEqual(res.status_code, 400)
 
     def test_wrong_create_actor(self):
@@ -178,7 +178,7 @@ class AgencyTestCase(unittest.TestCase):
             'gender': 'male'
         }
         res = self.client().post('/actors/add', data=json.dumps(actor), headers={'Content-Type': 'application/json'})
-        data = json.loads(res.data)
+        json.loads(res.data)
         self.assertEqual(res.status_code, 400)
 
     def test_wrong_edit_actor(self):
@@ -188,24 +188,24 @@ class AgencyTestCase(unittest.TestCase):
         actors = Actor.query.all()
         actor_id = actors[-1].id
         res = self.client().patch('actors/edit/' + str(actor_id), data=json.dumps(edit_data),
-                                headers={'Content-Type': 'application/json'})
-        data = json.loads(res.data)
+                                  headers={'Content-Type': 'application/json'})
+        json.loads(res.data)
         self.assertEqual(res.status_code, 400)
 
     # movies error behaviour
     def test_wrong_get_movies(self):
         res = self.client().post('/movies')
-        data = json.loads(res.data)
+        json.loads(res.data)
         self.assertEqual(res.status_code, 405)
 
     def test_wrong_get_movie(self):
         res = self.client().post('/movies/100000000000000')
-        data = json.loads(res.data)
+        json.loads(res.data)
         self.assertEqual(res.status_code, 405)
 
     def test_wrong_delete_movie(self):
         res = self.client().delete('/movies/100000000')
-        data = json.loads(res.data)
+        json.loads(res.data)
         self.assertEqual(res.status_code, 400)
 
     def test_wrong_create_movie(self):
@@ -215,7 +215,7 @@ class AgencyTestCase(unittest.TestCase):
         }
         res = self.client().post('/movies/add', data=json.dumps(movie),
                                  headers={'Content-Type': 'application/json'})
-        data = json.loads(res.data)
+        json.loads(res.data)
         self.assertEqual(res.status_code, 400)
 
     def test_wrong_edit_movie(self):
@@ -231,10 +231,10 @@ class AgencyTestCase(unittest.TestCase):
         }
         movies = Movie.query.all()
         movie_id = movies[-1].id
-        time = movies[-1].release_date
+
         res = self.client().patch('movies/edit/' + str(movie_id), data=json.dumps(edit_data),
-                                headers={'Content-Type': 'application/json'})
-        data = json.loads(res.data)
+                                  headers={'Content-Type': 'application/json'})
+        json.loads(res.data)
         self.assertEqual(res.status_code, 400)
 
 

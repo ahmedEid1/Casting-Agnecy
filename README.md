@@ -79,10 +79,10 @@ so he still has no access to any of the endpoints.**_
 ---
 ## API Endpoints
 
-### (for testing) `/login_url` 
-> return an url where you can sign to get a token to access endpoints in the app
+### (for testing) `/login` 
+> redirect you to the Auth0 login page, after signing in you can copy the token 
+> from the url and added to your requests
 
-> the token will be in the redirected url after you sign-in >> copy it from the url 
 - you can use the following accounts to test the permissions
   - [.....................]
   - [.....................]
