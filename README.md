@@ -1,6 +1,5 @@
 # Casting-Agnecy
 
-## [live link](https://ae-casting-agency.herokuapp.com)
 
 ## Motivation for project
 This is an API for casting agency to allow  authenticated users to preform actions on the 
